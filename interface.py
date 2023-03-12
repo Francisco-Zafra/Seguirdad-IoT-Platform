@@ -75,17 +75,9 @@ def create_sensor():
     print('IoT Sensor: ', cipher_mode, " ",sensor_selected, " ", timer_msg )
 
 def create_iot_device():
-    #path = os.path.join(os.getcwd(), "IoT_device.py")
     path_file = os.path.abspath("IoT_device.py")
-    print(path_file)
-    if os.path.exists(path_file):
-        print("El archivo existe.")
-    else:
-        print("El archivo no existe.")
-    #subprocess.run(['gnome-terminal', '-x', 'python3', '-c', f'import {path}; {path}.crear_objeto({parametro1}, {parametro2}, {parametro3})'])
-    subprocess.call(['start', 'cmd', '/c', f'python {path_file} create_new_decive {iot} {cipher_mode} {sensor_selected} {timer_msg} & pause'])
-    #ubprocess.call(['xterm', '-e', 'bash', '-c', f'python {path}.create_new_decive({cipher_mode},{sensor_selected}, {timer_msg}); bash'])
-
+    comando = f'start cmd /k "python {path_file} {"create_new_decive"} {iot} {cipher_mode} {sensor_selected} {timer_msg}"'
+    subprocess.call(comando, shell=True)
 
 
 def main_interface():
@@ -111,14 +103,14 @@ def main_interface():
             cipher_mode = sub_menu()
             if cipher_mode != 0:
                 create_iot_device()
-                #clear_screen()
+                clear_screen()
         elif opcion == '2':
             iot = 2
             clear_screen()
             cipher_mode = sub_menu()
             if cipher_mode != 0:
                 create_iot_device()
-                #clear_screen()
+                clear_screen()
         elif opcion == '3':
             iot = 3
             clear_screen()
@@ -132,7 +124,7 @@ def main_interface():
                         if (timer_msg == ''):
                             timer_msg = 0
                     create_iot_device()
-                    #clear_screen()
+                    clear_screen()
         elif opcion == '4':
             clear_screen()
             break
