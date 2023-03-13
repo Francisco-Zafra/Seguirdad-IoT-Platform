@@ -1,8 +1,6 @@
 import os
 import subprocess
 
-
-
 cipher_mode = 0
 sensor_selected = 0
 timer_msg = 0
@@ -62,23 +60,10 @@ def clear_screen():
     elif os.name in ('nt', 'dos', 'ce'):
         os.system('cls')
         
-
-
-def create_input():
-    print('IoT Input: ', cipher_mode)
-    
-
-def create_output():
-    print('IoT Output: ', cipher_mode)
-
-def create_sensor():
-    print('IoT Sensor: ', cipher_mode, " ",sensor_selected, " ", timer_msg )
-
 def create_iot_device():
     path_file = os.path.abspath("IoT_device.py")
     comando = f'start cmd /k "python {path_file} {"create_new_decive"} {iot} {cipher_mode} {sensor_selected} {timer_msg}"'
     subprocess.call(comando, shell=True)
-
 
 def main_interface():
     global cipher_mode
