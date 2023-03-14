@@ -62,7 +62,7 @@ def clear_screen():
         
 def create_iot_device():
     path_file = os.path.abspath("IoT_device.py")
-    comando = f'start cmd /k "python {path_file} {"create_new_decive"} {iot} {cipher_mode} {sensor_selected} {timer_msg}"'
+    comando = f'start cmd /k "python {path_file} {"create_new_decive"} {iot} {cipher_mode} {sensor_selected} {timer_msg} {"default-iot-device"} {"/fran14732832/default"}"'
     subprocess.call(comando, shell=True)
 
 def main_interface():
