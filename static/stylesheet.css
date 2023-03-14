@@ -1,0 +1,329 @@
+body {
+  background-image: url("background.jpeg");
+  background-size: cover;
+}
+
+.mapa {
+  margin: 0;
+  height: 400px;
+  width: 600px;
+}
+
+.navbar-brand {
+  padding-left: 10px;
+}
+
+.bi {
+  padding-right: 3px;
+}
+
+.container-fluid {
+  padding-left: 15px;
+}
+
+h6 {
+  padding-left: 13px;
+}
+
+.container {
+  position: relative;
+}
+
+.accordion {
+  padding-left: 200px;
+  padding-right: 200px;
+}
+
+.Cinfo {
+  position: relative;
+  width: 900px;
+  margin-top: 15px;
+}
+
+.Pinfo {
+  position: relative;
+  width: 900px;
+  margin-top: 15px;
+  margin-left: 90px;
+}
+
+.loginbtn {
+  margin: 0px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.class_content {
+  padding-left: auto;
+}
+
+.table {
+  padding-left: 20px;
+  padding-right: 300px;
+}
+
+.form_game {
+  padding-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form_group {
+  padding-bottom: 15px;
+  padding-top: 5px;
+}
+
+.game_input {
+  padding-bottom: 5px;
+  width: 10cm;
+}
+
+.marker-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.popup-window {
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  border: 1px solid black;
+  padding: 5px;
+}
+
+h2 {
+  font-family: Roboto, sans-serif;
+  padding-top: 70px;
+  padding-bottom: 20px;
+  padding-left: 60px;
+}
+
+h4 {
+  font-family: Roboto, sans-serif;
+  padding-bottom: 20px;
+  padding-left: 60px;
+}
+
+h1{
+  padding-top: 80px;
+  text-align: center;
+}
+
+.map{
+  margin: 3%;
+  height: 234%;
+  width: 93%;
+  box-shadow: #213550;
+  position: cover;
+}
+
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: flex;
+  font-size: 16px;
+  margin: 10px 375px;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  font-family: roboto;
+  cursor: pointer;
+  width: 150px;
+  height: 58px;
+  border-radius: 7px;
+  font-weight: bold;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn_submit{
+  border: none;
+  font-family: roboto;
+  cursor: pointer;
+  width: 93px;
+  height: 35px;
+  border-radius: 7px;
+  align-items: center;
+  justify-content: center;
+  border-color: #305752;
+}
+
+.form-label{
+  padding-left: 60px;
+  padding-bottom: 10px;
+  padding-top: 20px;
+}
+
+.btn-next{
+  padding-left: 60px;
+}
+
+.Cinfo {
+  position: relative;
+  width: 80%;
+  margin-top: 15px;
+  margin-left: 58px;
+  text-align: center;
+}
+
+.Pinfo {
+  position: relative;
+  width: 80%;
+  margin-top: 15px;
+  margin-right: 60px;
+  text-align: center;
+}
+
+.button2 {
+  background-color: #008CBA; 
+  color: white; 
+  border: 2px solid #48bee6;
+}
+
+.button2:hover {
+  background-color: white;
+  color: black;
+}
+
+.formUp {
+  height: 200px;
+  width: 450px;
+  background-color: rgb(255, 255, 255);
+  background-size: cover;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 7px;
+  border: 0.5px solid rgb(116, 115, 115);
+  align-items: center;
+  box-shadow: 0px 2px 7px rgb(116, 115, 115);
+}
+
+.theme-l5 {
+  color: #000 !important;
+  background-color: #f6faf9 !important
+}
+
+.theme-l4 {
+  color: #000 !important;
+  background-color: #e0eeec !important
+}
+
+.theme-l3 {
+  color: #000 !important;
+  background-color: #c1ddd9 !important
+}
+
+.theme-l2 {
+  color: #000 !important;
+  background-color: #a2ccc6 !important
+}
+
+.theme-l1 {
+  color: #000 !important;
+  background-color: #83bbb4 !important
+}
+
+.theme-d1 {
+  color: #fff !important;
+  background-color: #569d94 !important
+}
+
+.theme-d {
+  color: #fff !important;
+  background-color: #83bbb4 !important
+}
+
+.theme-d2 {
+  color: #fff !important;
+  background-color: #4d8b83 !important
+}
+
+.theme-d3 {
+  color: #fff !important;
+  background-color: #437a73 !important
+}
+
+.theme-d4 {
+  color: #fff !important;
+  background-color: #3a6962 !important
+}
+
+.theme-d5 {
+  color: #fff !important;
+  background-color: #305752 !important
+}
+
+.theme-light {
+  color: #000 !important;
+  background-color: #f6faf9 !important
+}
+
+.theme-dark {
+  color: #fff !important;
+  background-color: #305752 !important
+}
+
+.theme-action {
+  color: #fff !important;
+  background-color: #305752 !important
+}
+
+.theme {
+  color: #fff !important;
+  background-color: #64aaa1 !important
+}
+
+.title-theme {
+  color: #305752 !important
+}
+
+.w3-border-theme {
+  border-color: #64aaa1 !important
+}
+
+.hover-l4:hover {
+  color: #000 !important;
+  background-color: #e0eeec !important
+}
+
+.hover-l2:hover {
+  color: #000 !important;
+  background-color: #a2ccc6 !important
+}
+.hover-d1:hover {
+  color: #fff !important;
+  background-color: #569d94 !important
+}
+.hover-d2:hover  {
+  color: #fff !important;
+  background-color: #4d8b83 !important
+}
+
+.hover-d3:hover {
+  color: #fff !important;
+  background-color: #437a73 !important
+}
+
+.hover-d4:hover {
+  color: #fff !important;
+  background-color: #3a6962 !important
+}
+
+.hover-d5:hover {
+  color: #fff !important;
+  background-color: #305752 !important
+}
+
+.hover-text-theme:hover {
+  color: #305752 !important
+}
+
+.hover-border-theme:hover {
+  border-color: #437a73 !important
+}

@@ -18,7 +18,8 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from aesgcm import AEAD, AE
 
 class IoTDevice:
-    def __init__(self, cypher_mode = None, sensor = None, timer_msg = None, name="default-iot-device", topic="/fran14732832/default"):
+    def __init__(self, mode, cypher_mode = None, sensor = None, timer_msg = None, name=None, topic=None):
+        self.mode = mode
         self.cypher_mode = cypher_mode
         self.sensor = sensor
         self.timer_msg = timer_msg
@@ -31,6 +32,9 @@ class IoTDevice:
         self.topic = topic
         self.key = None
         self.peer_key = None
+
+    def print_information(self):
+        print(self.cypher_mode, self.sensor, self.timer_msg, self.name, self.topic)
 
     def input_d(self):
         while(True):
@@ -143,22 +147,20 @@ class IoTDevice:
         ).derive(shared_key)
 
         #Start working
-        self.gen_d()
+        
+        if (self.mode == 1):
+            self.input_d()
+        elif (self.mode == 2):
+            self.output_d()
+        elif (self.mode == 3):
+            self.gen_d()
 
 
 
 def create_new_decive(mode, cypher_mode, sensor, timer_msg, name, topic):
-    if (mode == 1):
-        iot = IoTDevice(cypher_mode)
-        th = threading.Thread(target=iot.input_d)
-    elif (mode == 2):
-        iot = IoTDevice()
-        th = threading.Thread(target=iot.output_d)
-    elif (mode == 3):
-        iot = IoTDevice(cypher_mode, sensor, timer_msg, name, topic)
-        #th = threading.Thread(target=iot.gen_d)
-        th = threading.Thread(target=iot.onBoarding)
-
+    iot = IoTDevice(mode, cypher_mode, sensor, timer_msg, name, topic)
+    iot.print_information()
+    th = threading.Thread(target=iot.onBoarding)
     th.start()
 
 
@@ -167,6 +169,7 @@ def main():
     if len(sys.argv) > 1:
         nombre_funcion = sys.argv[1]
         if nombre_funcion == 'create_new_decive':
+            #print(int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), str(sys.argv[6]), str(sys.argv[7]))
             create_new_decive(int(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5]), str(sys.argv[6]), str(sys.argv[7]))
         else:
             print("Función no encontrada")

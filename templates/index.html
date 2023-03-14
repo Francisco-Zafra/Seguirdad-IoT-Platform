@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+	
+{% block head %}
+	
+{% endblock %}
+	
+{% block body %}
+<h1> IoT Platform </h1>
+
+<div id="accordion" class="accordion">
+    <div class="card">
+        <div class="card-header">
+            <a class="btn" data-bs-toggle="collapse" href="#collapseOne">
+                Sensor Devices
+            </a>
+        </div>
+        <div id="collapseOne" class="collapse show" data-bs-parent="#accordion">
+            <div class="card-body">
+                <table class="table" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="width:50%">Topic</th>
+                            <th style="width:25%"></th>
+                            <th style="width:25%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game in gamesOn %}
+                        <tr>
+                            <td>{{ game.name }}</td>
+                            <td>
+                                <form>
+                                    <input type="submit" value="View" class="btn_submit btn-secondary hover-d1 hover-border-theme">
+                                </form>
+                            </td>
+                            <td>
+                            	<form>
+                                	<input type="submit" value="Unsubscribe" class="btn_submit btn-secondary hover-d1 hover-border-theme">
+                            	</form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseTwo">
+                Input Devices
+            </a>
+        </div>
+        <div id="collapseTwo" class="collapse" data-bs-parent="#accordion">
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width:50%">Topic</th>
+                            <th style="width:25%"></th>
+                            <th style="width:25%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for game in gamesOff %}
+                        <tr>
+                            <td>{{ game.name }}</td>
+                            <td>
+                                <form>
+                                    <input type="submit" value="View" class="btn_submit btn-secondary hover-d1 hover-border-theme">
+                                </form>
+                            </td>
+                            <td>
+                            	<form>
+                                	<input type="submit" value="Unsubscribe" class="btn_submit btn-secondary hover-d1 hover-border-theme">
+                            	</form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

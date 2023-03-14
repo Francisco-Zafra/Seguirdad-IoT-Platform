@@ -5,6 +5,13 @@ cipher_mode = 0
 sensor_selected = 0
 timer_msg = 0
 iot = 0
+counter_Temp = 1
+counter_Hum = 1
+counter_Lum = 1
+counter_input = 1
+counter_output = 1
+topic_b = ''
+name_device = ''
 
 def sub_menu():
     while True:
@@ -30,7 +37,12 @@ def sub_menu():
             print('Opción inválida')
 
 def select_sensor():
+    global counter_Temp
+    global counter_Hum
+    global counter_Lum
     while True:
+        name = ''
+        topic = ''
         print('\n')
         print('------------------------------------------------')
         print('---------------- Tipo de Sensor ----------------')
@@ -43,11 +55,21 @@ def select_sensor():
         opcion_sub = input('Seleccione el tipo de sensor a crear: ')
 
         if opcion_sub == '1':
-            return 1
+            name = 'Temperatura-'+str(counter_Temp)
+            topic =  '/Device/Temperatura-'+str(counter_Temp)
+            counter_Temp +=1
+            return (1, name,topic)
+        
         elif opcion_sub == '2':
-            return 2
+            name = 'Temperatura-'+str(counter_Hum)
+            topic =  '/Device/Temperatura-'+str(counter_Hum)
+            counter_Hum+=1
+            return (2, name,topic)
+        
         elif opcion_sub == '3':
-            return 3
+            name = 'Intensidad_Luminosa'+str(counter_Lum)
+            topic = '/Device/Intensidad_Luminosa-'+str(counter_Lum)
+            return (3, name,topic)
         elif opcion_sub == '4':
             clear_screen()
             return 0
@@ -62,7 +84,7 @@ def clear_screen():
         
 def create_iot_device():
     path_file = os.path.abspath("IoT_device.py")
-    comando = f'start cmd /k "python {path_file} {"create_new_decive"} {iot} {cipher_mode} {sensor_selected} {timer_msg} {"default-iot-device"} {"/fran14732832/default"}"'
+    comando = f'start cmd /k "python {path_file} {"create_new_decive"} {iot} {cipher_mode} {sensor_selected} {timer_msg} {name_device} {topic_b}"'
     subprocess.call(comando, shell=True)
 
 def main_interface():
@@ -70,8 +92,15 @@ def main_interface():
     global sensor_selected 
     global timer_msg
     global iot
+    global counter_output
+    global counter_input
+    global topic_b
+    global name_device
+
     while True:
         cipher_mode, sensor_selected, timer_msg = 0,0,0
+        topic_b = ''
+        name_device = ''
         print('------------------------------------------------')
         print('---------- Creación de Dispositos IoT ----------')
         print('------------------------------------------------')
@@ -87,22 +116,28 @@ def main_interface():
             clear_screen()
             cipher_mode = sub_menu()
             if cipher_mode != 0:
+                name_device = 'inputDevice-' + str(counter_input)
+                topic_b = '/Device/inputDevice-'+str(counter_input)
                 create_iot_device()
                 clear_screen()
+                counter_input+=1
         elif opcion == '2':
             iot = 2
             clear_screen()
             cipher_mode = sub_menu()
             if cipher_mode != 0:
+                name_device = 'outputDevice-' + str(counter_output)
+                topic_b = '/Device/outputDevice-'+str(counter_output)
                 create_iot_device()
                 clear_screen()
+                counter_output+=1
         elif opcion == '3':
             iot = 3
             clear_screen()
             cipher_mode = sub_menu()
             if cipher_mode != 0:
                 clear_screen()
-                sensor_selected = select_sensor()
+                sensor_selected, name_device, topic_b = select_sensor()
                 if sensor_selected != 0:
                     while timer_msg == 0:
                         timer_msg = input('Tiempo entre mensajes(seg): ') #no permitir el enter
