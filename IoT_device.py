@@ -1,9 +1,12 @@
 import threading
 import time
+import datetime
 import random
 import sys
 import paho.mqtt.client as mqtt
 import json
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from aesgcm import AEAD, AE
 
 class IoTDevice:
     def __init__(self, cypher_mode = None, sensor = None, timer_msg = None):
@@ -11,17 +14,20 @@ class IoTDevice:
         self.sensor = sensor
         self.timer_msg = timer_msg
         self.topic = ''
+        self.key = AESGCM.generate_key(bit_length=128)
         self.client = mqtt.Client()
         self.client.connect("broker.hivemq.com", 1883, 60)
         
-
-
-
     def input_d(self):
         while(True):
-            msg = input("Digite la información a enviar: ")
-            print(msg)
-            encrypted_data = '' #encriptar datos
+            msg_plaintext = input("Digite la información a enviar: ")
+            associated_data = datetime.datetime.timestamp(datetime.datetime.now())
+            if self.cypher_mode == 1:
+                encryted_data = self.cypher_method.encrypt(self.key, msg_plaintext.encode())
+            elif self.cypher_mode == 2: 
+                encryted_data = self.cypher_method.encrypt(self.key, msg_plaintext.encode(), associated_data)
+
+            print(msg_plaintext, encryted_data)
             #self.client.publish(self.topic, payload=encrypted_data, qos=0, retain=False)
 
     def output_d(self):
@@ -30,17 +36,26 @@ class IoTDevice:
         while(True):
             print("Esperando mesanje del servidor: ")
 
+
     def gen_d(self):
         while(True):
-            data = random.randint(1, 100)
-            print("Lenyendo dato: ", data)
+            plaintext = str(random.randint(1, 100))
+            print("Lenyendo dato: ", plaintext)
+            associated_data = datetime.datetime.timestamp(datetime.datetime.now())
+            if self.cypher_mode == 1:
+                print("AE")
+                encryted_data = AE().encrypt(self.key, plaintext.encode())
+            elif self.cypher_mode == 2:
+                print("El otro")
+                encryted_data = AEAD().encrypt(self.key, plaintext.encode(), associated_data)
+
+            print(plaintext, encryted_data)
             print("Enviando datos al servidor.....")
-            encrypted_data = '' #encriptar datos
             #self.client.publish(self.topic, payload=encrypted_data, qos=0, retain=False)
             time.sleep(self.timer_msg)
 
     def on_message(self, client, userdata, msg):
-        f = Fernet(key)
+        #f = Fernet(key)
         data = json.loads(f.decrypt(msg.payload))
         print(msg.topic+" "+str(data['data']))
 
