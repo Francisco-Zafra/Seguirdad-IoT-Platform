@@ -1,5 +1,6 @@
 import threading
 import time
+import datetime
 import random
 import sys
 import paho.mqtt.client as mqtt
@@ -13,6 +14,8 @@ from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat,
 from cryptography.hazmat.primitives.serialization import load_pem_public_key
 
 readyToSend = False
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from aesgcm import AEAD, AE
 
 class IoTDevice:
     def __init__(self, cypher_mode = None, sensor = None, timer_msg = None, name="default-iot-device", topic="/fran14732832/default"):
@@ -31,9 +34,14 @@ class IoTDevice:
 
     def input_d(self):
         while(True):
-            msg = input("Digite la información a enviar: ")
-            print(msg)
-            encrypted_data = '' #encriptar datos
+            msg_plaintext = input("Digite la información a enviar: ")
+            associated_data = datetime.datetime.timestamp(datetime.datetime.now())
+            if self.cypher_mode == 1:
+                encryted_data = self.cypher_method.encrypt(self.key, msg_plaintext.encode())
+            elif self.cypher_mode == 2: 
+                encryted_data = self.cypher_method.encrypt(self.key, msg_plaintext.encode(), associated_data)
+
+            print(msg_plaintext, encryted_data)
             #self.client.publish(self.topic, payload=encrypted_data, qos=0, retain=False)
 
     def output_d(self):
@@ -42,10 +50,20 @@ class IoTDevice:
         while(True):
             print("Esperando mesanje del servidor: ")
 
+
     def gen_d(self):
         while(True):
-            data = random.randint(1, 100)
-            print("Lenyendo dato: ", data)
+            plaintext = str(random.randint(1, 100))
+            print("Lenyendo dato: ", plaintext)
+            associated_data = datetime.datetime.timestamp(datetime.datetime.now())
+            if self.cypher_mode == 1:
+                print("AE")
+                encryted_data = AE().encrypt(self.key, plaintext.encode())
+            elif self.cypher_mode == 2:
+                print("El otro")
+                encryted_data = AEAD().encrypt(self.key, plaintext.encode(), associated_data)
+
+            print(plaintext, encryted_data)
             print("Enviando datos al servidor.....")
             info=self.client.publish(self.topic, payload='{"name": "hola"}', qos=0, retain=False)
             print("Mensaje enviado", info.is_published())

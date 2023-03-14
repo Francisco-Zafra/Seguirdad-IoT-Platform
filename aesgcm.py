@@ -1,12 +1,12 @@
 import os
-
+import _ctypes
 from cryptography.hazmat.primitives.ciphers import (
     Cipher, algorithms, modes
 )
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 class AEAD:
-    def encrypt(key, plaintext, associated_data):
+    def encrypt(self, key, plaintext, associated_data):
         # Generate a random 96-bit IV.
         iv = os.urandom(12)
 
@@ -27,7 +27,7 @@ class AEAD:
 
         return (iv, ciphertext, encryptor.tag)
 
-    def decrypt(key, associated_data, iv, ciphertext, tag):
+    def decrypt(self, key, associated_data, iv, ciphertext, tag):
         # Construct a Cipher object, with the key, iv, and additionally the
         # GCM tag used for authenticating the message.
         decryptor = Cipher(
@@ -48,7 +48,7 @@ class AEAD:
         return plain
 
 class AE:
-    def encrypt(key, plaintext):
+    def encrypt(self, key, plaintext):
         # Generate a random 96-bit IV.
         iv = os.urandom(12)
 
@@ -65,7 +65,7 @@ class AE:
 
         return (iv, ciphertext, encryptor.tag)
 
-    def decrypt(key, iv, ciphertext, tag):
+    def decrypt(self, key, iv, ciphertext, tag):
         # Construct a Cipher object, with the key, iv, and additionally the
         # GCM tag used for authenticating the message.
         decryptor = Cipher(
@@ -82,19 +82,3 @@ class AE:
         return plain
 
 
-if __name__ == "__main__":
-    algo = "AEAD" # "AEAD" or "AE"
-    key = AESGCM.generate_key(bit_length=128)
-    plaintext = b'a secret message!'
-    associated_data = b"authenticated but not encrypted payload" # in case of AEAD
-    decrypted_text = b""
-    #for AE, plain text = plain text + associated data???
-
-    if algo == "AEAD":
-        iv, ciphertext, tag = AEAD.encrypt(key, plaintext, associated_data)
-        decrypted_text = AEAD.decrypt(key, associated_data, iv, ciphertext, tag)
-    elif algo == "AE":
-        iv, ciphertext, tag = AE.encrypt(key, plaintext)
-        decrypted_text = AE.decrypt(key, iv, ciphertext, tag)
-    print("iv: {}, Cipher text: {}, Tag: {}".format(iv,ciphertext,tag))
-    print("Decrypted text: {}".format(decrypted_text.decode()))
