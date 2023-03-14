@@ -15,16 +15,15 @@ def on_connect(client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    f = Fernet(key)
-    data = json.loads(f.decrypt(msg.payload))
-    print(msg.topic+" "+str(data['data']))
+    print("Mensaje:")
+    print(msg.topic+" "+str(msg.payload))
 
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
 a = client.connect("broker.hivemq.com", 1883, 60)
-client.subscribe("/fran192837/device", qos=0)
+client.subscribe("/fran14732832/sub", qos=0)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.

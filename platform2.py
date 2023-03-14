@@ -1,3 +1,4 @@
+from time import sleep
 import paho.mqtt.client as mqtt
 import threading
 import json
@@ -15,9 +16,7 @@ def on_connect(client, userdata, flags, rc):
 
 def printit():
   threading.Timer(5.0, printit).start()
-  f = Fernet(key)
-  token = f.encrypt(bytes(json.dumps({"data": 12345}), 'utf-8'))
-  client.publish("/fran192837/device", payload=token, qos=0, retain=False)
+  client.publish("/fran14732832/sub", payload="token2", qos=0, retain=False)
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -29,5 +28,6 @@ printit()
 # handles reconnecting.
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
-client.loop_forever()
+while 1:
+  sleep(1)
     

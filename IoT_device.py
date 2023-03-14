@@ -4,18 +4,25 @@ import random
 import sys
 import paho.mqtt.client as mqtt
 import json
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import dh
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from cryptography.hazmat.primitives import hmac
+import cryptography
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+
+readyToSend = False
 
 class IoTDevice:
     def __init__(self, cypher_mode = None, sensor = None, timer_msg = None):
         self.cypher_mode = cypher_mode
         self.sensor = sensor
         self.timer_msg = timer_msg
-        self.topic = ''
+        self.onBoarding_topic = '/fran14732832/sub'
         self.client = mqtt.Client()
         self.client.connect("broker.hivemq.com", 1883, 60)
-        
-
-
+        self.masterKey = b'master key'
+        self.authenticated = False
 
     def input_d(self):
         while(True):
@@ -35,14 +42,66 @@ class IoTDevice:
             data = random.randint(1, 100)
             print("Lenyendo dato: ", data)
             print("Enviando datos al servidor.....")
-            encrypted_data = '' #encriptar datos
-            #self.client.publish(self.topic, payload=encrypted_data, qos=0, retain=False)
-            time.sleep(self.timer_msg)
+            info=self.client.publish('/fran14732832/temp', payload='{"name": "hola"}', qos=0, retain=False)
+            print("Mensaje enviado", info.is_published())
+            time.sleep(5)
 
     def on_message(self, client, userdata, msg):
         f = Fernet(key)
         data = json.loads(f.decrypt(msg.payload))
         print(msg.topic+" "+str(data['data']))
+
+    def onBoardingMessage(self, client, userdata, msg):
+        print("Mensaje recibido:")
+        print(msg.topic+" "+str(msg.payload))
+        data = json.loads(msg.payload)
+        if data['name'] == "IoT_Platform":
+            h2 = hmac.HMAC(self.masterKey, hashes.SHA256())
+            h2.update(bytes(bytes.fromhex(data['public_key'])))
+            try:
+                h2.verify(bytes.fromhex(data['signature']))
+                print("Verified")
+                self.authenticated = True
+                self.client.loop_stop()
+            except cryptography.exceptions.InvalidSignature:
+                print("Failed signature")
+        print("Mensaje procesado")
+
+
+    def onBoarding(self, name="iot-device", topic="/fran14732832/sub", cypher_mode=1):
+        print("Comenzando On Boarding")
+        print("Generando claves...")
+        h = hmac.HMAC(self.masterKey, hashes.SHA256())
+        parameters = dh.generate_parameters(generator=2, key_size=512)
+        server_private_key = parameters.generate_private_key()
+        print("Claves generadas...")
+        print("Generando firma...")
+        h.update(server_private_key.public_key().public_bytes(encoding=Encoding.PEM, format=PublicFormat.SubjectPublicKeyInfo))
+        signature = h.finalize()
+        print("Firma generada...")
+
+        msg = {}
+        msg['public_key'] = server_private_key.public_key().public_bytes(encoding=Encoding.PEM, format=PublicFormat.SubjectPublicKeyInfo).hex()
+        msg['signature'] = signature.hex()
+        msg['name'] =  name
+        msg['topic'] = '/fran14732832/temp'
+        msg['cypher_mode'] = cypher_mode
+
+        self.client.message_callback_add(self.onBoarding_topic, self.onBoardingMessage)
+        self.client.subscribe(self.onBoarding_topic, qos= 0)
+        print(self.onBoarding_topic)
+        info = self.client.publish(self.onBoarding_topic, payload=json.dumps(msg), qos = 0, retain = False)
+        print("Mensaje enviado")
+        print(info.is_published())
+        print(msg)
+        self.client.loop_start()
+        while not self.authenticated:
+            time.sleep(1)
+            print(".", end="", flush=True)
+        self.client.loop_stop()
+
+        self.gen_d()
+
 
 
 def create_new_decive(mode, cypher_mode, sensor, timer_msg):
@@ -54,7 +113,8 @@ def create_new_decive(mode, cypher_mode, sensor, timer_msg):
         th = threading.Thread(target=iot.output_d)
     elif (mode == 3):
         iot = IoTDevice(cypher_mode, sensor, timer_msg)
-        th = threading.Thread(target=iot.gen_d)
+        #th = threading.Thread(target=iot.gen_d)
+        th = threading.Thread(target=iot.onBoarding)
 
     th.start()
 
