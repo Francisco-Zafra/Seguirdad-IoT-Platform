@@ -20,7 +20,7 @@ masterKey = b'master key'
 data = None
 isData = False
 key = None
-sym_key = b"\r\x02uw\xee'\x84tR\x14\x88\xa2P*\x8a\xe5" 
+#sym_key = b"\r\x02uw\xee'\x84tR\x14\x88\xa2P*\x8a\xe5" 
 
 def deviceOnBoarding(data):
 
@@ -88,18 +88,19 @@ def on_message(client, userdata, msg):
     if msg.topic != "/fran14732832/sub" or data['name'] == "IoT_Platform":
         data = None
         print(msg.topic+" "+str(msg.payload))
-    else:
-        print(msg.topic)
         iv = msg.iv
         tag = msg.tag
         encrypted_data = msg.cypher_text
         timestamp = msg.associated_timestamp
         cypher_mode = msg.cypher_mode
         if cypher_mode == 1:
-            decrypted_data = AE().decrypt(sym_key, iv, encrypted_data, tag)
+            decrypted_data = AE().decrypt(keys[data['name']], iv, encrypted_data, tag)
         elif cypher_mode == 2: 
-            decrypted_data = AEAD().decrypt(sym_key, timestamp, iv, encrypted_data, tag)
+            decrypted_data = AEAD().decrypt(keys[data['name']], timestamp, iv, encrypted_data, tag)
         print(decrypted_data)
+    else:
+        print(msg.topic)
+        
 
 client = mqtt.Client()
 client.on_connect = on_connect
