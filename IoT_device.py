@@ -23,7 +23,7 @@ class IoTDevice:
         self.cypher_mode = cypher_mode
         self.sensor = sensor
         self.timer_msg = timer_msg
-        self.onBoarding_topic = '/fran14732832/sub'
+        self.onBoarding_topic = '/fran14732832/sub' #CAMBIAR A UN TIPIC MÁS GENERICO
         self.client = mqtt.Client()
         self.client.connect("broker.hivemq.com", 1883, 60)
         self.masterKey = b'master key'

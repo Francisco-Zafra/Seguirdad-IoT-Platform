@@ -53,7 +53,7 @@ def deviceOnBoarding(data):
     #Subscribe to device topic
     client.subscribe(data["topic"], qos= 0)
     print("Subscribe to:" + str(data['topic']))
-
+    #Almacenar topics aqui
     #Publish response
     info = client.publish('/fran14732832/sub', payload=json.dumps(msg), qos = 0, retain = False)
     print("Mensaje enviado ", info.is_published())

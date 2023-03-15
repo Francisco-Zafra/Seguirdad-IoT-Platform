@@ -25,16 +25,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for game in gamesOn %}
+                        {% for device in sensor_topics %}
                         <tr>
-                            <td>{{ game.name }}</td>
+                            <td>{{ device[0] }}</td>
                             <td>
-                                <form>
-                                    <input type="submit" value="View" class="btn_submit btn-secondary hover-d1 hover-border-theme">
+                                <form method="post" action="{{ url_for('view_data', name_d = device[1])}}">
+                                    <input type="hidden" name="name_d" value="{{device[1]}}">
+                                    <input type="submit" value="Ver" class="btn_submit btn-secondary hover-d1 hover-border-theme">
                                 </form>
                             </td>
                             <td>
                             	<form>
+                                    <input type="hidden" name="device_topic" value="{{device[0]}}">
                                 	<input type="submit" value="Unsubscribe" class="btn_submit btn-secondary hover-d1 hover-border-theme">
                             	</form>
                             </td>
@@ -62,16 +64,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for game in gamesOff %}
+                        {% for device in output_topics %}
                         <tr>
-                            <td>{{ game.name }}</td>
+                            <td>{{ device[0] }}</td>
                             <td>
                                 <form>
+                                    <input type="hidden" name="device_topic" value="{{device[0]}}">
                                     <input type="submit" value="View" class="btn_submit btn-secondary hover-d1 hover-border-theme">
                                 </form>
                             </td>
                             <td>
                             	<form>
+                                    <input type="hidden" name="device_topic" value="{{device[0]}}">
                                 	<input type="submit" value="Unsubscribe" class="btn_submit btn-secondary hover-d1 hover-border-theme">
                             	</form>
                             </td>
