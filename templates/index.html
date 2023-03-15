@@ -30,7 +30,7 @@
                             <td>{{ device[0] }}</td>
                             <td>
                                 <form method="post" action="{{ url_for('view_data', name_d = device[1])}}">
-                                    <input type="hidden" name="name_d" value="{{device[1]}}">
+                                    <input type="hidden" name="topic" value="{{device[0]}}">
                                     <input type="submit" value="Ver" class="btn_submit btn-secondary hover-d1 hover-border-theme">
                                 </form>
                             </td>
