@@ -14,11 +14,13 @@ from cryptography.hazmat.primitives import hmac
 import cryptography
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from cryptography.hazmat.primitives.serialization import load_pem_public_key, load_pem_parameters
+from aesgcm import AEAD, AE
 
 masterKey = b'master key'
 data = None
 isData = False
 key = None
+sym_key = b"\r\x02uw\xee'\x84tR\x14\x88\xa2P*\x8a\xe5" 
 
 def deviceOnBoarding(data):
 
@@ -88,6 +90,16 @@ def on_message(client, userdata, msg):
         print(msg.topic+" "+str(msg.payload))
     else:
         print(msg.topic)
+        iv = msg.iv
+        tag = msg.tag
+        encrypted_data = msg.cypher_text
+        timestamp = msg.associated_timestamp
+        cypher_mode = msg.cypher_mode
+        if cypher_mode == 1:
+            decrypted_data = AE().decrypt(sym_key, iv, encrypted_data, tag)
+        elif cypher_mode == 2: 
+            decrypted_data = AEAD().decrypt(sym_key, timestamp, iv, encrypted_data, tag)
+        print(decrypted_data)
 
 client = mqtt.Client()
 client.on_connect = on_connect
