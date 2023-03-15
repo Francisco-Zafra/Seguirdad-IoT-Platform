@@ -95,3 +95,11 @@ h1{
 .hover-border-theme:hover {
   border-color: #437a73 !important
 }
+
+.Cinfo {
+  position: relative;
+  width: 80%;
+  margin-top: 15px;
+  margin-left: 58px;
+  text-align: center;
+}

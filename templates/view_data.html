@@ -15,4 +15,29 @@
 <h1 style="margin-top: 50px;">Dispositivo: {{ name_d }}</h1>
 <h3>Topic: {{ topic }}</h3>
 
+<div class="card Cinfo" >
+    <div class="card-header">
+        <a class="collapsed btn" data-bs-toggle="collapse">
+            Datos del Sensor
+        </a>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th style="width:45%">Dato</th>
+                <th style="width:55%">Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in data_device %}
+            <tr>
+                <td>{{ data[0] }}</td>
+                <td>{{ data[1] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
 {% endblock %}
