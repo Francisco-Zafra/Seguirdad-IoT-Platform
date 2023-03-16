@@ -55,7 +55,6 @@ class IoTDevice:
             msg['tag'] = tag
             msg['cypher_mode'] = self.cypher_mode
             msg['name'] =  self.name
-            keys[msg['name']] = self.key
             msg_json = json.dumps(msg)
             #self.client.publish(self.topic, payload=encrypted_data, qos=0, retain=False)
 
@@ -71,20 +70,19 @@ class IoTDevice:
             msg = {}
             plaintext = str(random.randint(1, 100))
             print("Lenyendo dato: ", plaintext)
-            associated_data = bytes(str(datetime.datetime.timestamp(datetime.datetime.now())))
+            associated_data = bytes(str(datetime.datetime.timestamp(datetime.datetime.now())), encoding="utf8")
             if self.cypher_mode == 1:
                 print("AE")
                 iv, encrypted_data, tag = AE().encrypt(self.key, bytes(plaintext,encoding="utf8"))
             elif self.cypher_mode == 2:
                 print("AEAD")
                 iv, encrypted_data, tag = AEAD().encrypt(self.key, bytes(plaintext,encoding="utf8"), associated_data)
-            msg['cypher_text'] = encrypted_data
-            msg['associated_timestamp'] = associated_data
-            msg['iv'] = iv
-            msg['tag'] = tag
+            msg['cypher_text'] = encrypted_data.hex()
+            msg['associated_timestamp'] = associated_data.hex()
+            msg['iv'] = iv.hex()
+            msg['tag'] = tag.hex()
             msg['cypher_mode'] = self.cypher_mode
             msg['name'] =  self.name
-            keys[msg['name']] = self.key
             print(plaintext, encrypted_data)
             print("Enviando datos al servidor.....")
             info=self.client.publish(self.topic, payload=json.dumps(msg), qos=0, retain=False)

@@ -19,7 +19,7 @@ from aesgcm import AEAD, AE
 masterKey = b'master key'
 data = None
 isData = False
-key = None
+keys = {}
 #sym_key = b"\r\x02uw\xee'\x84tR\x14\x88\xa2P*\x8a\xe5" 
 
 def deviceOnBoarding(data):
@@ -65,7 +65,7 @@ def deviceOnBoarding(data):
     peer_key = load_pem_public_key(bytes.fromhex(data['public_key']))
 
     shared_key = server_private_key.exchange(peer_key)
-    key = HKDF(
+    keys[data["name"]] = HKDF(
         algorithm=hashes.SHA256(),
         length=32,
         salt=None,
@@ -83,21 +83,23 @@ def on_connect(client, userdata, flags, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     global data
-    print("Mensaje")
+    print("Mensaje: ", str(msg.topic))
     data = json.loads(msg.payload)
     if msg.topic != "/fran14732832/sub" or data['name'] == "IoT_Platform":
         data = None
-        print(msg.topic+" "+str(msg.payload))
-        iv = msg.iv
-        tag = msg.tag
-        encrypted_data = msg.cypher_text
-        timestamp = msg.associated_timestamp
-        cypher_mode = msg.cypher_mode
-        if cypher_mode == 1:
-            decrypted_data = AE().decrypt(keys[data['name']], iv, encrypted_data, tag)
-        elif cypher_mode == 2: 
-            decrypted_data = AEAD().decrypt(keys[data['name']], timestamp, iv, encrypted_data, tag)
-        print(decrypted_data)
+        d = json.loads(msg.payload)
+        if d["name"] != "IoT_Platform":
+            print(msg.topic+" "+str(msg.payload))
+            iv = bytes.fromhex(d["iv"])
+            tag = bytes.fromhex(d["tag"])
+            encrypted_data = bytes.fromhex(d["cypher_text"])
+            timestamp = bytes.fromhex(d["associated_timestamp"])
+            cypher_mode = d["cypher_mode"]
+            if cypher_mode == 1:
+                decrypted_data = AE().decrypt(keys[d['name']], iv, encrypted_data, tag)
+            elif cypher_mode == 2: 
+                decrypted_data = AEAD().decrypt(keys[d['name']], timestamp, iv, encrypted_data, tag)
+            print("Dato desencriptado: ", decrypted_data)
     else:
         print(msg.topic)
         
