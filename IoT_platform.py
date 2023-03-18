@@ -15,14 +15,18 @@ import cryptography
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from cryptography.hazmat.primitives.serialization import load_pem_public_key, load_pem_parameters
 from aesgcm import AEAD, AE
+import logging
 
-masterKey = b'master key'
+MasterKey = b'master key'
 data = None
 isData = False
 keys = {}
-#sym_key = b"\r\x02uw\xee'\x84tR\x14\x88\xa2P*\x8a\xe5" 
+client = None
 
 def deviceOnBoarding(data):
+    masterKey = MasterKey
+    # if data["tipo"] == "input_d":
+    #     masterKey = 2312312
 
     #Check signature
     h2 = hmac.HMAC(masterKey, hashes.SHA256())
@@ -54,6 +58,9 @@ def deviceOnBoarding(data):
 
     #Subscribe to device topic
     client.subscribe(data["topic"], qos= 0)
+    # sensor_topics[data["name"]]["topic"] = data["topic"]
+    # sensor_topics[data["name"]]["data"] = []
+    print(sensor_topics)
     print("Subscribe to:" + str(data['topic']))
     #Almacenar topics aqui
     #Publish response
@@ -99,23 +106,27 @@ def on_message(client, userdata, msg):
                 decrypted_data = AE().decrypt(keys[d['name']], iv, encrypted_data, tag)
             elif cypher_mode == 2: 
                 decrypted_data = AEAD().decrypt(keys[d['name']], timestamp, iv, encrypted_data, tag)
+
+            # sensor_topics[data["name"]]["data"].append({value: 3 date: 12731}])
             print("Dato desencriptado: ", decrypted_data)
     else:
         print(msg.topic)
         
+def platform(cl, st):
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
+    global client, sensor_topics
+    sensor_topics = st
 
+    client = cl
+    client.on_connect = on_connect
+    client.on_message = on_message
 
+    client.connect("broker.hivemq.com", 1883, 60)
+    client.subscribe("/fran14732832/sub", qos=0)
 
-a = client.connect("broker.hivemq.com", 1883, 60)
-client.subscribe("/fran14732832/sub", qos=0)
+    client.loop_start()
 
-client.loop_start()
-
-while 1:
-    if data != None:
-        deviceOnBoarding(data)
-    time.sleep(.1)
+    while 1:
+        if data != None:
+            deviceOnBoarding(data)
+        time.sleep(.1)

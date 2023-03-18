@@ -115,6 +115,9 @@ class IoTDevice:
 
 
     def onBoarding(self):
+        if self.mode == 1:
+            self.masterKey = input("Inbtroduce la clave")
+            
         print("Comenzando On Boarding")
         print("Generando claves...")
         # Generar frima HMAC
