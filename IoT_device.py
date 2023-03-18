@@ -31,6 +31,8 @@ class IoTDevice:
         self.name = name
         self.topic = topic
         self.key = None
+        #self.sym_key = AESGCM.generate_key(bit_length=128)
+        #self.sym_key = b"\r\x02uw\xee'\x84tR\x14\x88\xa2P*\x8a\xe5" 
         self.peer_key = None
 
     def print_information(self):
@@ -38,14 +40,22 @@ class IoTDevice:
 
     def input_d(self):
         while(True):
+            msg = {}
             msg_plaintext = input("Digite la información a enviar: ")
-            associated_data = datetime.datetime.timestamp(datetime.datetime.now())
+            #binary!
+            associated_data = bytes(str(datetime.datetime.timestamp(datetime.datetime.now())))
             if self.cypher_mode == 1:
-                encryted_data = self.cypher_method.encrypt(self.key, msg_plaintext.encode())
+                iv, encrypted_data, tag = AE().encrypt(self.key, bytes(msg_plaintext))
             elif self.cypher_mode == 2: 
-                encryted_data = self.cypher_method.encrypt(self.key, msg_plaintext.encode(), associated_data)
-
-            print(msg_plaintext, encryted_data)
+                iv, encrypted_data, tag = AEAD().encrypt(self.key, bytes(msg_plaintext), bytes(associated_data))
+            print(msg_plaintext, encrypted_data)
+            msg['cypher_text'] = encrypted_data
+            msg['associated_timestamp'] = associated_data
+            msg['iv'] = iv
+            msg['tag'] = tag
+            msg['cypher_mode'] = self.cypher_mode
+            msg['name'] =  self.name
+            msg_json = json.dumps(msg)
             #self.client.publish(self.topic, payload=encrypted_data, qos=0, retain=False)
 
     def output_d(self):
@@ -57,19 +67,25 @@ class IoTDevice:
 
     def gen_d(self):
         while(True):
+            msg = {}
             plaintext = str(random.randint(1, 100))
             print("Lenyendo dato: ", plaintext)
-            associated_data = datetime.datetime.timestamp(datetime.datetime.now())
+            associated_data = bytes(str(datetime.datetime.timestamp(datetime.datetime.now())), encoding="utf8")
             if self.cypher_mode == 1:
                 print("AE")
-                encryted_data = AE().encrypt(self.key, plaintext.encode())
+                iv, encrypted_data, tag = AE().encrypt(self.key, bytes(plaintext,encoding="utf8"))
             elif self.cypher_mode == 2:
-                print("El otro")
-                encryted_data = AEAD().encrypt(self.key, plaintext.encode(), associated_data)
-
-            print(plaintext, encryted_data)
+                print("AEAD")
+                iv, encrypted_data, tag = AEAD().encrypt(self.key, bytes(plaintext,encoding="utf8"), associated_data)
+            msg['cypher_text'] = encrypted_data.hex()
+            msg['associated_timestamp'] = associated_data.hex()
+            msg['iv'] = iv.hex()
+            msg['tag'] = tag.hex()
+            msg['cypher_mode'] = self.cypher_mode
+            msg['name'] =  self.name
+            print(plaintext, encrypted_data)
             print("Enviando datos al servidor.....")
-            info=self.client.publish(self.topic, payload='{"name": "hola"}', qos=0, retain=False)
+            info=self.client.publish(self.topic, payload=json.dumps(msg), qos=0, retain=False)
             print("Mensaje enviado", info.is_published())
             time.sleep(5)
 
