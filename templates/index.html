@@ -43,6 +43,7 @@
                             </td>
                             <td>
                             	<form method="post" action="{{ url_for('unsubscribe', name_d = device.device_name)}}">
+                                    <input type="hidden" name="device_mode" value="{{device.mode}}">
                                     <input type="hidden" name="device_topic" value="{{device.topic}}">
                                 	<input type="submit" value="Unsubscribe" class="btn_submit btn-secondary hover-d1 hover-border-theme">
                             	</form>
@@ -83,6 +84,7 @@
                             </td>
                             <td>
                             	<form method="post" action="{{ url_for('unsubscribe', name_d = device.device_name)}}">
+                                    <input type="hidden" name="device_mode" value="{{device.mode}}">
                                     <input type="hidden" name="device_topic" value="{{device.topic}}">
                                 	<input type="submit" value="Unsubscribe" class="btn_submit btn-secondary hover-d1 hover-border-theme">
                             	</form>

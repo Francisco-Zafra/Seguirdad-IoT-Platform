@@ -26,13 +26,23 @@ def view_data(name_d):
 def unsubscribe():
     if request.method == 'POST':
         topic = request.form['device_topic']
+        mode = int(request.form['device_mode'])
         print('Unsubscribe: ', topic)
         client.unsubscribe(topic=topic)
+        print(topic, mode, type(mode))
+        if (mode == 1):
+            for sensor in input_topics:
+                if sensor['topic'] == topic:
+                    input_topics.remove(sensor)
+
+        elif (mode == 3):
+            for sensor in sensor_topics:
+                if sensor['topic'] == topic:
+                    sensor_topics.remove(sensor)
 
         return redirect('/')
     else:
         pass
-
 
 
 if __name__ == "__main__":
