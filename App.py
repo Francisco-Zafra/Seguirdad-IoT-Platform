@@ -7,9 +7,9 @@ app = Flask(__name__)
 
 @app.route('/', methods=['POST','GET'])
 def index():
-    global sensor_topics
-    sensor_topics = [['/Device/Temperatura-1', 'Temperatura-1', [[19, '15-03-2023 23:59:55'],[20, '15-03-2023 23:59:55']], 3], ['/Device/Temperatura-2', 'Temperatura-2', [120, '15-03-2023 23:59:55'], 3],
-                    ['/Device/Humedad-1', 'Humedad-1', [25, '15-03-2023 23:59:55'], 3], ['/Device/Intensidad_Luminosa-1', 'Intensidad_Luminosa-1' , [19, '15-03-2023 23:59:55'], 3]]
+    
+    #sensor_topics = [['/Device/Temperatura-1', 'Temperatura-1', [[19, '15-03-2023 23:59:55'],[20, '15-03-2023 23:59:55']], 3], ['/Device/Temperatura-2', 'Temperatura-2', [120, '15-03-2023 23:59:55'], 3],
+    #               ['/Device/Humedad-1', 'Humedad-1', [25, '15-03-2023 23:59:55'], 3], ['/Device/Intensidad_Luminosa-1', 'Intensidad_Luminosa-1' , [19, '15-03-2023 23:59:55'], 3]]
     
     # sensor_topics = {
     #     "Nombre_del_dispositivo":{    
@@ -31,14 +31,14 @@ def index():
     #             "intervalo": 4
     #             },
     #     }
-    
     # sensor_topics["Nombre_del_dispositivo2"]["topic"]
     # sensor_topics["Nombre_del_dispositivo2"]["data"]
     # sensor_topics["Nombre_del_dispositivo2"]["intervalo"]
 
-    output_topics = [['/Device/outputDevice-1', 2], ['/Device/outputDevice-1', 2]]
+    #output_topics = [['/Device/outputDevice-1', 2], ['/Device/outputDevice-1', 2]]
     if request.method == 'GET':
-        return render_template('index.html', sensor_topics=sensor_topics, output_topics = output_topics)
+        print(input_topics)
+        return render_template('index.html', sensor_topics=sensor_topics, input_topics = input_topics)
     else:
         pass
 
@@ -66,12 +66,12 @@ def unsubscribe():
 
 
 if __name__ == "__main__":
-    global client, sensor_topics
+    global client, sensor_topics, input_topics
+    sensor_topics = []
+    input_topics = []
 
     client = mqtt.Client()
-    sensor_topics = []
-
-    x = threading.Thread(target=IoT_platform.platform, args=(client,sensor_topics,), daemon=True)
+    x = threading.Thread(target=IoT_platform.platform, args=(client,sensor_topics, input_topics,), daemon=True)
     x.start()
 
     app.run(debug=False)

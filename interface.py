@@ -56,19 +56,19 @@ def select_sensor():
 
         if opcion_sub == '1':
             name = 'Temperatura-'+str(counter_Temp)
-            topic =  '/Device/Temperatura-'+str(counter_Temp)
+            topic =  '/IoT4984561/Device/Temperatura-'+str(counter_Temp)
             counter_Temp +=1
             return (1, name,topic)
         
         elif opcion_sub == '2':
-            name = 'Temperatura-'+str(counter_Hum)
-            topic =  '/Device/Temperatura-'+str(counter_Hum)
+            name = 'Humedad-'+str(counter_Hum)
+            topic =  '/IoT4984561/Device/Humedad-'+str(counter_Hum)
             counter_Hum+=1
             return (2, name,topic)
         
         elif opcion_sub == '3':
             name = 'Intensidad_Luminosa'+str(counter_Lum)
-            topic = '/Device/Intensidad_Luminosa-'+str(counter_Lum)
+            topic = '/IoT4984561/Device/Intensidad_Luminosa-'+str(counter_Lum)
             return (3, name,topic)
         elif opcion_sub == '4':
             clear_screen()
@@ -117,7 +117,7 @@ def main_interface():
             cipher_mode = sub_menu()
             if cipher_mode != 0:
                 name_device = 'inputDevice-' + str(counter_input)
-                topic_b = '/Device/inputDevice-'+str(counter_input)
+                topic_b = '/IoT4984561/Device/inputDevice-'+str(counter_input)
                 create_iot_device()
                 clear_screen()
                 counter_input+=1

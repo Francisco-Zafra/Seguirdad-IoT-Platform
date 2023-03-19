@@ -58,11 +58,23 @@ def deviceOnBoarding(data):
 
     #Subscribe to device topic
     client.subscribe(data["topic"], qos= 0)
-    # sensor_topics[data["name"]]["topic"] = data["topic"]
-    # sensor_topics[data["name"]]["data"] = []
-    print(sensor_topics)
+    print(data)
+    dic = {}
+    dic['device_name'] = data['name']
+    dic['topic'] = data['topic']
+    dic['mode'] = data['mode']
+    dic['data'] = []
+    if (data['mode'] == 1):
+        print('JOIN INPUTDEVICE LIST')
+        input_topics.append(dic)
+        print(input_topics)
+    elif (data['mode'] == 3):
+        print('JOIN SENSORDEVICE LIST')
+        sensor_topics.append(dic)
+        print(sensor_topics)
+    
     print("Subscribe to:" + str(data['topic']))
-    #Almacenar topics aqui
+
     #Publish response
     info = client.publish('/fran14732832/sub', payload=json.dumps(msg), qos = 0, retain = False)
     print("Mensaje enviado ", info.is_published())
@@ -107,15 +119,28 @@ def on_message(client, userdata, msg):
             elif cypher_mode == 2: 
                 decrypted_data = AEAD().decrypt(keys[d['name']], timestamp, iv, encrypted_data, tag)
 
-            # sensor_topics[data["name"]]["data"].append({value: 3 date: 12731}])
             print("Dato desencriptado: ", decrypted_data)
+
+            if (d['mode'] == 1):
+                print('------------------AQUI------------------------------', input_topics)
+                device_dict = next((item for item in input_topics if item.get('device_name') == d['name']), None)
+                new_msg = {'timestamp': timestamp.decode(), "value": decrypted_data.decode()}
+                device_dict['data'].append(new_msg)
+                print(input_topics)
+            elif (d['mode'] == 3):
+                device_dict = next((item for item in sensor_topics if item.get('device_name') == d['name']), None)
+                print(device_dict)
+                new_value = {'timestamp': timestamp.decode(), "value": decrypted_data.decode()}
+                device_dict['data'].append(new_value)
+                #print(sensor_topics)
     else:
         print(msg.topic)
         
-def platform(cl, st):
+def platform(cl, st, it):
 
-    global client, sensor_topics
+    global client, sensor_topics, input_topics
     sensor_topics = st
+    input_topics = it
 
     client = cl
     client.on_connect = on_connect

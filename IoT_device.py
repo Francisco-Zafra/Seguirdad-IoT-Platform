@@ -1,6 +1,6 @@
 import threading
 import time
-import datetime
+import datetime 
 import random
 import sys
 import paho.mqtt.client as mqtt
@@ -43,20 +43,24 @@ class IoTDevice:
             msg = {}
             msg_plaintext = input("Digite la información a enviar: ")
             #binary!
-            associated_data = bytes(str(datetime.datetime.timestamp(datetime.datetime.now())))
+            timestamp= datetime.datetime.timestamp(datetime.datetime.now())
+            timestamp = datetime.datetime.fromtimestamp(timestamp)
+            timestamp = timestamp.strftime("%d-%m-%Y %H:%M:%S")
+            associated_data = bytes(timestamp, encoding="utf8")
             if self.cypher_mode == 1:
-                iv, encrypted_data, tag = AE().encrypt(self.key, bytes(msg_plaintext))
+                iv, encrypted_data, tag = AE().encrypt(self.key, bytes(msg_plaintext, encoding='utf8'))
             elif self.cypher_mode == 2: 
-                iv, encrypted_data, tag = AEAD().encrypt(self.key, bytes(msg_plaintext), bytes(associated_data))
+                iv, encrypted_data, tag = AEAD().encrypt(self.key, bytes(msg_plaintext, encoding='utf8'), associated_data)
             print(msg_plaintext, encrypted_data)
-            msg['cypher_text'] = encrypted_data
-            msg['associated_timestamp'] = associated_data
-            msg['iv'] = iv
-            msg['tag'] = tag
+            msg['cypher_text'] = encrypted_data.hex()
+            msg['associated_timestamp'] = associated_data.hex()
+            msg['iv'] = iv.hex()
+            msg['tag'] = tag.hex()
             msg['cypher_mode'] = self.cypher_mode
             msg['name'] =  self.name
+            msg['mode'] = self.mode
             msg_json = json.dumps(msg)
-            #self.client.publish(self.topic, payload=encrypted_data, qos=0, retain=False)
+            self.client.publish(self.topic, payload=msg_json, qos=0, retain=False)
 
     def output_d(self):
         self.client.on_message = self.on_message
@@ -70,7 +74,10 @@ class IoTDevice:
             msg = {}
             plaintext = str(random.randint(1, 100))
             print("Lenyendo dato: ", plaintext)
-            associated_data = bytes(str(datetime.datetime.timestamp(datetime.datetime.now())), encoding="utf8")
+            timestamp= datetime.datetime.timestamp(datetime.datetime.now())
+            timestamp = datetime.datetime.fromtimestamp(timestamp)
+            timestamp = timestamp.strftime("%d-%m-%Y %H:%M:%S")
+            associated_data = bytes(timestamp, encoding="utf8")
             if self.cypher_mode == 1:
                 print("AE")
                 iv, encrypted_data, tag = AE().encrypt(self.key, bytes(plaintext,encoding="utf8"))
@@ -83,11 +90,12 @@ class IoTDevice:
             msg['tag'] = tag.hex()
             msg['cypher_mode'] = self.cypher_mode
             msg['name'] =  self.name
+            msg['mode'] = self.mode
             print(plaintext, encrypted_data)
             print("Enviando datos al servidor.....")
             info=self.client.publish(self.topic, payload=json.dumps(msg), qos=0, retain=False)
             print("Mensaje enviado", info.is_published())
-            time.sleep(5)
+            time.sleep(self.timer_msg)
 
     def on_message(self, client, userdata, msg):
         print(msg.topic+" "+str(msg.payload))
@@ -115,8 +123,8 @@ class IoTDevice:
 
 
     def onBoarding(self):
-        if self.mode == 1:
-            self.masterKey = input("Inbtroduce la clave")
+        #if self.mode == 1:
+            #self.masterKey = input("Inbtroduce la clave")
             
         print("Comenzando On Boarding")
         print("Generando claves...")
@@ -136,6 +144,7 @@ class IoTDevice:
         msg['signature'] = signature.hex()
         msg['name'] =  self.name
         msg['topic'] = self.topic
+        msg['mode'] = self.mode
         msg['cypher_mode'] = self.cypher_mode
         msg['parameters'] = parameters.parameter_bytes(encoding=Encoding.PEM, format=ParameterFormat.PKCS3).hex()
 

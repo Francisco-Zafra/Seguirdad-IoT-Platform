@@ -6,7 +6,6 @@
 	
 {% block body %}
 <h1> IoT Platform </h1>
-
 <div id="accordion" class="accordion">
     <div class="card">
         <div class="card-header">
@@ -27,17 +26,17 @@
                     <tbody>
                         {% for device in sensor_topics %}
                         <tr>
-                            <td>{{ device[0] }}</td>
+                            <td>{{ device.topic}}</td>
                             <td>
-                                <form method="post" action="{{ url_for('view_data', name_d = device[1])}}">
-                                    <input type="hidden" name="topic" value="{{device[0]}}">
-                                    <input type="hidden" name="data_device" value="{{device[2]}}">
+                                <form method="post" action="{{ url_for('view_data', name_d = device.device_name)}}">
+                                    <input type="hidden" name="topic" value="{{device.topic}}">
+                                    <input type="hidden" name="data_device" value="{{device.data}}">
                                     <input type="submit" value="Ver" class="btn_submit btn-secondary hover-d1 hover-border-theme">
                                 </form>
                             </td>
                             <td>
-                            	<form method="post" action="{{ url_for('unsubscribe', name_d = device[1])}}">
-                                    <input type="hidden" name="device_topic" value="{{device[0]}}">
+                            	<form method="post" action="{{ url_for('unsubscribe', name_d = device.device_name)}}">
+                                    <input type="hidden" name="device_topic" value="{{device.topic}}">
                                 	<input type="submit" value="Unsubscribe" class="btn_submit btn-secondary hover-d1 hover-border-theme">
                             	</form>
                             </td>
@@ -65,18 +64,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for device in output_topics %}
+                        {% for device in input_topics %}
                         <tr>
-                            <td>{{ device[0] }}</td>
+                            <td>{{ device.topic }}</td>
                             <td>
-                                <form>
-                                    <input type="hidden" name="device_topic" value="{{device[0]}}">
+                                <form method="post" action="{{ url_for('view_data', name_d = device.device_name)}}">
+                                    <input type="hidden" name="topic" value="{{device.topic}}">
+                                    <input type="hidden" name="data_device" value="{{device.data}}">
                                     <input type="submit" value="View" class="btn_submit btn-secondary hover-d1 hover-border-theme">
                                 </form>
                             </td>
                             <td>
-                            	<form>
-                                    <input type="hidden" name="device_topic" value="{{device[0]}}">
+                            	<form method="post" action="{{ url_for('unsubscribe', name_d = device.device_name)}}">
+                                    <input type="hidden" name="device_topic" value="{{device.topic}}">
                                 	<input type="submit" value="Unsubscribe" class="btn_submit btn-secondary hover-d1 hover-border-theme">
                             	</form>
                             </td>
