@@ -25,8 +25,8 @@ client = None
 
 def deviceOnBoarding(data):
     masterKey = MasterKey
-    # if data["tipo"] == "input_d":
-    #     masterKey = 2312312
+    if data["mode"] == 1:
+        masterKey = password
 
     #Check signature
     h2 = hmac.HMAC(masterKey, hashes.SHA256())
@@ -136,11 +136,12 @@ def on_message(client, userdata, msg):
     else:
         print(msg.topic)
         
-def platform(cl, st, it):
-
-    global client, sensor_topics, input_topics
+def platform(cl, st, it, pwd):
+    global client, sensor_topics, input_topics, password
     sensor_topics = st
     input_topics = it
+    password = pwd
+    
 
     client = cl
     client.on_connect = on_connect
