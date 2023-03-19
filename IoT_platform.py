@@ -26,7 +26,7 @@ client = None
 def deviceOnBoarding(data):
     masterKey = MasterKey
     if data["mode"] == 1:
-        masterKey = password
+        masterKey = bytes(str(password), encoding="utf8")
 
     #Check signature
     h2 = hmac.HMAC(masterKey, hashes.SHA256())

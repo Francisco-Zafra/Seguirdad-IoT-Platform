@@ -124,7 +124,7 @@ class IoTDevice:
 
     def onBoarding(self):
         if self.mode == 1:
-            self.masterKey = input("Inbtroduce la clave")
+            self.masterKey = bytes(input("Inbtroduce la clave"),encoding="utf8")
             
         print("Comenzando On Boarding")
         print("Generando claves...")
