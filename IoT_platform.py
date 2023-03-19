@@ -1,10 +1,6 @@
 import json
 import paho.mqtt.client as mqtt
-import codecs
-import threading
 import time
-import random
-import sys
 import paho.mqtt.client as mqtt
 import json
 from cryptography.hazmat.primitives import hashes
@@ -15,7 +11,6 @@ import cryptography
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from cryptography.hazmat.primitives.serialization import load_pem_public_key, load_pem_parameters
 from aesgcm import AEAD, AE
-import logging
 
 MasterKey = b'master key'
 data = None
@@ -65,18 +60,14 @@ def deviceOnBoarding(data):
     dic['mode'] = data['mode']
     dic['data'] = []
     if (data['mode'] == 1):
-        print('JOIN INPUTDEVICE LIST')
         input_topics.append(dic)
-        print(input_topics)
     elif (data['mode'] == 3):
-        print('JOIN SENSORDEVICE LIST')
         sensor_topics.append(dic)
-        print(sensor_topics)
     
     print("Subscribe to:" + str(data['topic']))
 
     #Publish response
-    info = client.publish('/fran14732832/sub', payload=json.dumps(msg), qos = 0, retain = False)
+    info = client.publish("/IoT_Patform_2156/sub", payload=json.dumps(msg), qos = 0, retain = False)
     print("Mensaje enviado ", info.is_published())
 
     #Create cypher key
@@ -104,7 +95,7 @@ def on_message(client, userdata, msg):
     global data
     print("Mensaje: ", str(msg.topic))
     data = json.loads(msg.payload)
-    if msg.topic != "/fran14732832/sub" or data['name'] == "IoT_Platform":
+    if msg.topic != "/IoT_Patform_2156/sub" or data['name'] == "IoT_Platform":
         data = None
         d = json.loads(msg.payload)
         if d["name"] != "IoT_Platform":
@@ -122,17 +113,13 @@ def on_message(client, userdata, msg):
             print("Dato desencriptado: ", decrypted_data)
 
             if (d['mode'] == 1):
-                print('------------------AQUI------------------------------', input_topics)
                 device_dict = next((item for item in input_topics if item.get('device_name') == d['name']), None)
                 new_msg = {'timestamp': timestamp.decode(), "value": decrypted_data.decode()}
                 device_dict['data'].append(new_msg)
-                print(input_topics)
             elif (d['mode'] == 3):
                 device_dict = next((item for item in sensor_topics if item.get('device_name') == d['name']), None)
-                print(device_dict)
                 new_value = {'timestamp': timestamp.decode(), "value": decrypted_data.decode()}
                 device_dict['data'].append(new_value)
-                #print(sensor_topics)
     else:
         print(msg.topic)
         
@@ -148,7 +135,7 @@ def platform(cl, st, it, pwd):
     client.on_message = on_message
 
     client.connect("broker.hivemq.com", 1883, 60)
-    client.subscribe("/fran14732832/sub", qos=0)
+    client.subscribe("/IoT_Patform_2156/sub", qos=0)
 
     client.loop_start()
 

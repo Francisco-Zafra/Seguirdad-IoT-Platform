@@ -105,9 +105,8 @@ def main_interface():
         print('---------- Creación de Dispositos IoT ----------')
         print('------------------------------------------------')
         print('1. Dispositivo IoT con interfaz de entrada')
-        print('2. Dispositivo IoT con interfaz de salida')
-        print('3. Sensor')
-        print('4. Salir')
+        print('2. Sensor')
+        print('3. Salir')
 
         opcion = input('Seleccione el tipo de dispositivo a crear: ')
 
@@ -122,16 +121,6 @@ def main_interface():
                 clear_screen()
                 counter_input+=1
         elif opcion == '2':
-            iot = 2
-            clear_screen()
-            cipher_mode = sub_menu()
-            if cipher_mode != 0:
-                name_device = 'outputDevice-' + str(counter_output)
-                topic_b = '/Device/outputDevice-'+str(counter_output)
-                create_iot_device()
-                clear_screen()
-                counter_output+=1
-        elif opcion == '3':
             iot = 3
             clear_screen()
             cipher_mode = sub_menu()
@@ -145,7 +134,7 @@ def main_interface():
                             timer_msg = 0
                     create_iot_device()
                     clear_screen()
-        elif opcion == '4':
+        elif opcion == '3':
             clear_screen()
             break
         else:
